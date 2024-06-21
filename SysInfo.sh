@@ -63,7 +63,7 @@ echo "Memory Swap :            $Swap%"
 echo "Total Proceeses :        $Processes"
 echo "Root Processes :         $RootProcesses"
 echo "IPv4 address :           $ipv4     "
-echo "IPv4 address :           $ipv6     "
+echo "IPv6 address :           $ipv6     "
 echo "Last Login :             $lastlog"
 echo "                                                   "
 
