@@ -1,5 +1,6 @@
 # SysInfo : Track system Informations
 
+<span style="color: red;">**Aviso**</span>: Tenemos una versión en español del script SysInfo, que se llama [SysInfo-es.sh](https://github.com/ciscoAnass/SysInfo/blob/main/SysInfo-es.sh).
 
 - This script gathers various system information such as disk usage, RAM usage, processes, IP addresses, last login details, SSH login information, and currently logged-in users.
 
