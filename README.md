@@ -23,14 +23,14 @@ sudo apt-get update
 ## Installation
 
 
-### Clone the repository:
+#### Clone the repository:
 
 ```bash
  git clone https://github.com/ciscoAnass/SysInfo
  cd SysInfo
 ```
 
-### Make the script executable:
+#### Make the script executable:
 
 ```bash
 chmod +x system_info.sh
@@ -53,6 +53,23 @@ source ~/.bashrc
 ```
 
 - Now, the script will run automatically every time you open a new terminal session.
+
+## Creating a Command Alias
+
+- If you want to create a command alias so you can execute the script by simply typing sysinfo, follow these steps:
+
+
+```bash
+echo "alias sysinfo='~/SysInfo/SysInfo.sh'" >> ~/.bashrc
+```
+
+*-Source ~/.bashrc to apply the changes:**
+
+```bash
+source ~/.bashrc
+```
+Now, you can simply type sysinfo in your terminal to run the script.
+
 
 ## Example Output
 
