@@ -26,8 +26,8 @@ sudo apt-get update
 ### Clone the repository:
 
 ```bash
- git clone https://github.com/your-username/your-repository.git
- cd your-repository
+ git clone https://github.com/ciscoAnass/SysInfo
+ cd SysInfo
 ```
 
 ### Make the script executable:
