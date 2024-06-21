@@ -41,12 +41,12 @@ chmod +x system_info.sh
 - If you want the script to run every time you open a terminal session, you can append the script path to ~/.bashrc using the following command:
 
 ```bash
-echo "~/path/to/your/script/system_info.sh" >> ~/.bashrc
+echo "~/SysInfo/SysInfo.sh" >> ~/.bashrc
 ```
 
-- This command appends the path to your script to the end of ~/.bashrc. Replace ~/path/to/your/script/system_info.sh with the actual path to your script.
+- This command appends the path to your script to the end of ~/.bashrc.  
 
-After appending, source ~/.bashrc to apply the changes:
+- After appending, source ~/.bashrc to apply the changes:
 
 ```bash
 source ~/.bashrc
