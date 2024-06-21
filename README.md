@@ -3,6 +3,7 @@
 
 - This script gathers various system information such as disk usage, RAM usage, processes, IP addresses, last login details, SSH login information, and currently logged-in users.
 
+<img src="/img/output.png" alt="logo"></img>
 
 ## Description
 
