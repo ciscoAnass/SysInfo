@@ -1,4 +1,4 @@
-# SysInfo : Track system metrics
+# SysInfo : Track system Informations
 
 
 - This script gathers various system information such as disk usage, RAM usage, processes, IP addresses, last login details, SSH login information, and currently logged-in users.
