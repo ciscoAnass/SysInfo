@@ -27,7 +27,7 @@ sudo apt-get update
 #### Clone the repository:
 
 ```bash
- git clone https://github.com/ciscoAnass/SysInfo
+ git clone https://github.com/ciscoAnass/SysInfo.git
  cd SysInfo
 ```
 
