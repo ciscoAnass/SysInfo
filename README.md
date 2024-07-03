@@ -34,7 +34,7 @@ sudo apt-get update
 #### Make the script executable:
 
 ```bash
-chmod +x system_info.sh
+chmod +x SysInfo.sh
 ```
 
 ## Running the Script on Every Terminal Launch (Optional)
