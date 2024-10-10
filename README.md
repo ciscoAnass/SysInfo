@@ -6,6 +6,7 @@
 
 <img src="/img/output.png" alt="logo"></img>
 
+
 ## Description
 
 The script utilizes several Linux commands to fetch and calculate system metrics, providing a snapshot of the system's current state.
