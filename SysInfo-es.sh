@@ -1,73 +1,69 @@
 #!/bin/bash
 clear
 
+# Mostrar la información del sistema
+echo "Información del sistema - $(date)"
+echo "--------------------------------"
 
-#VARIABLES Del Disco
+# Información de Uso del Disco
+DiskInfo=$(df -hT / | awk 'NR==2 {print $6, $3}')
+DiskPer=$(echo "$DiskInfo" | cut -d " " -f1)
+DiskCapacity=$(echo "$DiskInfo" | cut -d " " -f2)
 
-DiskPer=$(df -hT | grep -w "/" | perl -p -e 's/ {2,}/ /g' | cut -d " " -f6)
-DiskCapacity=$(df -hT | grep -w "/" | perl -p -e 's/ {2,}/ /g' | cut -d " " -f3)
+# Información de Uso de la RAM
+TotalRam=$(free | awk '/Mem/ {print $2}')
+UsedRam=$(free | awk '/Mem/ {print $3}')
+UsoRAM=$(awk "BEGIN {printf \"%.2f\", ($UsedRam / $TotalRam) * 100}")
 
-#VARIABLES del RAM
-TotalRam=$(free | perl -p -e 's/ {2,}/ /g' | grep "Mem" | cut -d " " -f2)
-UsedRam=$(free | perl -p -e 's/ {2,}/ /g' | grep "Mem" | cut -d " " -f3)
-RAM=$(echo "scale=3; ($UsedRam / $TotalRam) * 100" | bc)
+# Información de Uso de Swap
+TotalSwap=$(free | awk '/Swap/ {print $2}')
+UsedSwap=$(free | awk '/Swap/ {print $3}')
+UsoSwap=$(awk "BEGIN {printf \"%.2f\", ($UsedSwap / $TotalSwap) * 100}")
 
+# Información de Procesos
+TotalProcesos=$(ps -e --no-headers | wc -l)
+ProcesosRoot=$(ps -u root --no-headers | wc -l)
 
-#VARIABLES de los SWAP
-TotalSwap=$(free | perl -p -e 's/ {2,}/ /g' | grep "Swap" | cut -d " " -f2)
-UsedSwap=$(free | perl -p -e 's/ {2,}/ /g' | grep "Swap" | cut -d " " -f3)
-Swap=$(echo "scale=3; ($UsedSwap / $TotalSwap) * 100" | bc)
+# Información de las IPs (Múltiples IPs separadas por "-")
+ipv4=$(ip -4 addr show scope global | awk '/inet/ {print $2}' | paste -sd " - ")
+ipv6=$(ip -6 addr show scope global | awk '/inet6/ {print $2}' | paste -sd " - ")
+ipv4=${ipv4:-"No hay dirección IPv4"}
+ipv6=${ipv6:-"No hay dirección IPv6"}
 
+# Último reinicio del sistema
+ultimo_reinicio=$(last reboot | head -1 | awk '{print $5, $6, $7, $8, $9}')
 
-#VARIABLES de los Procesos
-Pro=$(ps aux | wc -l )
-Processes=$(echo "scale=3; $Pro - 1" | bc)
-RootProcesses=$(ps aux | cut -d " " -f1 | grep "root" | wc -l)
+# Usuarios logueados
+UsuariosLogueados=$(who | awk '{print $1}' | sort | uniq | paste -sd ", " -)
 
-#Variables Los Ip
-ipv4=$(ip -4 addr show | grep -v "127.0.0.1" | grep "inet" | cut -d " " -f6 )
-if [ -z "$ipv4" ]; then
-    ipv4="No IPv4 Address"
-fi
-
-ipv6=$(hostname -I | cut -d " "  -f2)
-if [ -z "$ipv6" ]; then
-    ipv6="No IPv6 Address"
-fi
-#Variables Lde la Ultima Conexion
-lastlog=$(last down | cut -d " " -f3,4,5,6,7 | tail -1)
-
-# Variables de los usuarios logueados
-LoggedUsers=$(who | cut -d " " -f1)
-
-
-# VARIABLES del SSH
-ssh_log=$(grep 'sshd' /var/log/auth.log | grep 'Accepted' | tail -1)
-if [ -z "$ssh_log" ]; then
-    ssh_info="No SSH Connection"
+# Última conexión SSH con formato mejorado
+ssh_log=$(grep 'sshd.*Accepted' /var/log/auth.log | tail -1)
+if [[ -z "$ssh_log" ]]; then
+    ssh_info="Sin conexiones SSH recientes"
 else
-    sshtime=$(echo "$ssh_log" | perl -p -e 's/ {2,}/ /g' | cut -d " " -f1,2,3)
-    sshuser=$(echo "$ssh_log" | perl -p -e 's/ {2,}/ /g' | cut -d " " -f9)
-    sship=$(echo "$ssh_log" | perl -p -e 's/ {2,}/ /g' | cut -d " " -f11)
-    sshport=$(echo "$ssh_log" | perl -p -e 's/ {2,}/ /g' | cut -d " " -f13)
-    ssh_info="The last SSH login for user $sshuser was at $sshtime from $sship port $sshport"
+    # Extraer y formatear los datos de la última conexión SSH
+    ssh_fecha=$(echo "$ssh_log" | awk '{print $1, $2, $3}')
+    ssh_usuario=$(echo "$ssh_log" | awk '{for(i=1;i<=NF;i++) if($i=="Accepted") print $(i+2)}')
+    sship=$(echo "$ssh_log" | awk '{for(i=1;i<=NF;i++) if($i=="from") print $(i+1)}')
+    sshpuerto=$(echo "$ssh_log" | awk '{for(i=1;i<=NF;i++) if($i=="port") print $(i+1)}')
+
+    # Verificar y formatear la fecha
+    ssh_fecha_formateada=$(date -d "$ssh_fecha" +"%Y-%m-%d %H:%M:%S" 2>/dev/null)
+    ssh_fecha_formateada=${ssh_fecha_formateada:-$ssh_fecha}
+
+    # Generar mensaje claro
+    ssh_info="Última conexión SSH por el usuario '${ssh_usuario:-desconocido}' el ${ssh_fecha_formateada:-desconocido} desde la IP ${sship:-desconocida} en el puerto ${sshpuerto:-desconocido}"
 fi
 
-#Menu
-
-echo "Información del sistema de $(date)"
-echo "                                                   "
-echo "Uso Del / :                 $DiskPer of $DiskCapacity "
-echo "Uso de memoria :            $RAM% "
-echo "Uso de Swap :               $Swap%"
-echo "Procesos Totales :          $Processes"
-echo "Procesos del Root :         $RootProcesses"
-echo "Dirección IPv4 :            $ipv4     "
-echo "Dirección IPv6 :            $ipv6     "
-echo "Último Acceso :             $lastlog"
-echo "                                                   "
-
+# Mostrar Información del Sistema
+echo "Uso del Disco (/):           $DiskPer de $DiskCapacity"
+echo "Uso de la RAM:               $UsoRAM%"
+echo "Uso de Swap:                 $UsoSwap%"
+echo "Total de Procesos:           $TotalProcesos"
+echo "Procesos del Root:           $ProcesosRoot"
+echo "Dirección(es) IPv4:          $ipv4"
+echo "Dirección(es) IPv6:          $ipv6"
+echo "Último reinicio del sistema: $ultimo_reinicio"
+echo "Usuarios logueados:          $UsuariosLogueados"
 echo "$ssh_info"
-
-echo "                                                   "
-echo "Usuarios lOGUEADOS :           $LoggedUsers "
+echo "--------------------------------"
